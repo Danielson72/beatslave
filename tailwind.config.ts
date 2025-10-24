@@ -43,6 +43,12 @@ const config: Config = {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
+        gold: {
+          light: "#f4e5b8",
+          DEFAULT: "#d4af37",
+          dark: "#b8932f",
+        },
+        "black-rich": "#0a0a0a",
       },
       borderRadius: {
         lg: "var(--radius)",
