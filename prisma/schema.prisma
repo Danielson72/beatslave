@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Artist {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  bio       String?
+  coverUrl  String?
+  website   String?
+  instagram String?
+  twitter   String?
+  releases  Release[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Release {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  artist      Artist    @relation(fields: [artistId], references: [id])
+  artistId    String
+  coverUrl    String?
+  releaseDate DateTime?
+  description String?
+  tracks      Track[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Track {
+  id         String      @id @default(cuid())
+  title      String
+  slug       String      @unique
+  release    Release     @relation(fields: [releaseId], references: [id])
+  releaseId  String
+  audioUrl   String?
+  previewUrl String?
+  duration   Int?
+  bpm        Int?
+  key        String?
+  genre      String?
+  mood       String?
+  tags       String[]
+
+  priceCents          Int @default(99)
+  standardPriceCents  Int @default(99)
+  premiumPriceCents   Int @default(499)
+  exclusivePriceCents Int @default(4999)
+
+  premiumRoyaltyEnabled      Boolean @default(false)
+  premiumRoyaltyThreshold    Int     @default(5000)
+  premiumRoyaltyTier1Percent Int     @default(30)
+  premiumRoyaltyTier2Percent Int     @default(35)
+  premiumRoyaltyTier3Percent Int     @default(40)
+
+  exclusiveRoyaltyEnabled      Boolean @default(false)
+  exclusiveRoyaltyThreshold    Int     @default(10000)
+  exclusiveRoyaltyTier1Percent Int     @default(10)
+  exclusiveRoyaltyTier2Percent Int     @default(15)
+  exclusiveRoyaltyTier3Percent Int     @default(20)
+
+  isActive   Boolean     @default(true)
+  orderItems OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Order {
+  id              String            @id @default(cuid())
+  stripeSessionId String?           @unique
+  customerEmail   String
+  totalCents      Int
+  status          OrderStatus       @default(PENDING)
+  items           OrderItem[]
+  downloadTokens  DownloadToken[]
+  termsAcceptance TermsAcceptance?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model OrderItem {
+  id          String      @id @default(cuid())
+  order       Order       @relation(fields: [orderId], references: [id])
+  orderId     String
+  track       Track       @relation(fields: [trackId], references: [id])
+  trackId     String
+  licenseType LicenseType
+  priceCents  Int
+  createdAt   DateTime    @default(now())
+}
+
+model DownloadToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  order     Order     @relation(fields: [orderId], references: [id])
+  orderId   String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model TermsAcceptance {
+  id           String   @id @default(cuid())
+  order        Order    @relation(fields: [orderId], references: [id])
+  orderId      String   @unique
+  acceptedAt   DateTime @default(now())
+  ipAddress    String?
+  userAgent    String?
+  legalVersion String   @default("v1.0")
+}
+
+model LicenseAgreement {
+  id            String      @id @default(cuid())
+  orderId       String
+  trackId       String
+  licenseType   LicenseType
+  agreementText String      @db.Text
+  createdAt     DateTime    @default(now())
+
+  @@index([orderId])
+  @@index([trackId])
+}
+
+model RoyaltyReport {
+  id              String   @id @default(cuid())
+  orderId         String
+  trackId         String
+  periodStart     DateTime
+  periodEnd       DateTime
+  reportedRevenue Int      @default(0)
+  royaltyDue      Int      @default(0)
+  status          String   @default("pending")
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([trackId])
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum LicenseType {
+  STANDARD
+  PREMIUM
+  EXCLUSIVE
+}
