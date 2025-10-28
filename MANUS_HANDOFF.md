@@ -116,7 +116,7 @@ All configured in `.env`:
 
 ```env
 DATABASE_URL                    ✅ Supabase PostgreSQL
-NEXT_PUBLIC_BASE_URL            ✅ https://beatslave.vercel.app
+NEXT_PUBLIC_BASE_URL            ✅ https://beatslave.netlify.app
 STRIPE_PUBLISHABLE_KEY          ✅ Configured
 STRIPE_SECRET_KEY               ✅ From environment variable
 STRIPE_WEBHOOK_SECRET           ✅ From environment variable
@@ -139,16 +139,16 @@ git commit -m "Backend implementation complete - v1.1"
 git push origin main
 ```
 
-### 2. **Deploy to Vercel**
-- Import repository to Vercel
+### 2. **Deploy to Netlify**
+- Import repository to Netlify
 - Add all environment variables from `.env`
 - Deploy
 
 ### 3. **Configure Stripe Webhook**
 - Go to Stripe Dashboard → Webhooks
-- Add endpoint: `https://beatslave.vercel.app/api/webhooks/stripe`
+- Add endpoint: `https://beatslave.netlify.app/api/webhooks/stripe`
 - Enable event: `checkout.session.completed`
-- Copy webhook secret → Add to Vercel as `STRIPE_WEBHOOK_SECRET`
+- Copy webhook secret → Add to Netlify as `STRIPE_WEBHOOK_SECRET`
 
 ### 4. **Test End-to-End**
 - [ ] Create test purchase
@@ -272,7 +272,7 @@ Three comprehensive documentation files have been created:
 **Repository:** https://github.com/Danielson72/beatslave
 
 **Recommended Next Steps:**
-1. Deploy to Vercel
+1. Deploy to Netlify
 2. Configure Stripe webhook in production
 3. Test end-to-end purchase flow
 4. Verify emails are sending correctly

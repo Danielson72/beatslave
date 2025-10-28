@@ -23,7 +23,7 @@ BeatSlave Market is a Next.js 14 application with a complete backend for selling
 - **ORM:** Prisma
 - **Payments:** Stripe
 - **Email:** Resend
-- **Deployment:** Vercel (recommended)
+- **Deployment:** Netlify (recommended)
 
 ---
 
@@ -102,7 +102,7 @@ Admin endpoints use **Bearer token authentication**:
 
 ```bash
 curl -H "Authorization: Bearer YOUR_ADMIN_PASSWORD" \
-  https://beatslave.vercel.app/api/admin/analytics
+  https://beatslave.netlify.app/api/admin/analytics
 ```
 
 The admin password is set in the `ADMIN_PASSWORD` environment variable.
@@ -434,7 +434,7 @@ Customer                Frontend              Backend                 Stripe
 
 ## 🚀 Deployment
 
-### Vercel Deployment
+### Netlify Deployment
 
 1. **Push to GitHub:**
    ```bash
@@ -443,26 +443,26 @@ Customer                Frontend              Backend                 Stripe
    git push origin main
    ```
 
-2. **Import to Vercel:**
+2. **Import to Netlify:**
    - Go to https://vercel.com
    - Import your GitHub repository
-   - Vercel will auto-detect Next.js
+   - Netlify will auto-detect Next.js
 
 3. **Configure Environment Variables:**
-   - In Vercel dashboard, go to Settings → Environment Variables
+   - In Netlify dashboard, go to Settings → Environment Variables
    - Add all variables from `.env`
    - Make sure to use production values for Stripe, Resend, etc.
 
 4. **Deploy:**
-   - Vercel will automatically deploy
-   - Note your production URL (e.g., `https://beatslave.vercel.app`)
+   - Netlify will automatically deploy
+   - Note your production URL (e.g., `https://beatslave.netlify.app`)
 
 5. **Configure Stripe Webhook:**
    - Go to Stripe Dashboard → Developers → Webhooks
-   - Add endpoint: `https://beatslave.vercel.app/api/webhooks/stripe`
+   - Add endpoint: `https://beatslave.netlify.app/api/webhooks/stripe`
    - Select event: `checkout.session.completed`
    - Copy webhook signing secret
-   - Add to Vercel environment variables as `STRIPE_WEBHOOK_SECRET`
+   - Add to Netlify environment variables as `STRIPE_WEBHOOK_SECRET`
 
 6. **Test in Production:**
    - Test checkout flow

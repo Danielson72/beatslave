@@ -202,7 +202,7 @@ NEXT_PUBLIC_ADMIN_UI_PASS       ✅ Configured
 ## 🚀 Deployment Checklist
 
 ### Environment Setup
-- [ ] Set all environment variables in Vercel
+- [ ] Set all environment variables in Netlify
 - [ ] Configure Stripe webhook endpoint
 - [ ] Test Resend API key
 - [ ] Verify database connection
@@ -213,7 +213,7 @@ NEXT_PUBLIC_ADMIN_UI_PASS       ✅ Configured
 - [ ] Seed initial data if needed
 
 ### Stripe Configuration
-- [ ] Add webhook endpoint: `https://beatslave.vercel.app/api/webhooks/stripe`
+- [ ] Add webhook endpoint: `https://beatslave.netlify.app/api/webhooks/stripe`
 - [ ] Enable `checkout.session.completed` event
 - [ ] Copy webhook secret to environment variables
 
