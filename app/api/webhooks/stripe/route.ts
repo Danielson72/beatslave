@@ -3,6 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 import { randomUUID } from "crypto";
+import { sendPurchaseConfirmation, sendAdminNotification } from "@/lib/email-service";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -46,6 +47,21 @@ export async function POST(req: NextRequest) {
     try {
       const order = await prisma.order.findUnique({
         where: { stripeSessionId: session.id },
+        include: {
+          items: {
+            include: {
+              track: {
+                include: {
+                  release: {
+                    include: {
+                      artist: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!order) {
@@ -59,13 +75,15 @@ export async function POST(req: NextRequest) {
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() + 24);
 
+      const downloadToken = randomUUID();
+
       await prisma.order.update({
         where: { id: order.id },
         data: {
           status: "COMPLETED",
           downloadTokens: {
             create: {
-              token: randomUUID(),
+              token: downloadToken,
               expiresAt,
             },
           },
@@ -81,6 +99,34 @@ export async function POST(req: NextRequest) {
       });
 
       console.log("Order completed:", order.id);
+
+      // Send emails
+      const orderItem = order.items[0];
+      if (orderItem) {
+        const track = orderItem.track;
+        const artist = track.release.artist;
+
+        // Send purchase confirmation to customer
+        await sendPurchaseConfirmation({
+          customerEmail: order.customerEmail,
+          trackTitle: track.title,
+          artistName: artist.name,
+          licenseType: orderItem.licenseType,
+          priceCents: orderItem.priceCents,
+          downloadToken,
+          orderId: order.id,
+        });
+
+        // Send admin notification
+        await sendAdminNotification({
+          customerEmail: order.customerEmail,
+          trackTitle: track.title,
+          artistName: artist.name,
+          licenseType: orderItem.licenseType,
+          priceCents: orderItem.priceCents,
+          orderId: order.id,
+        });
+      }
     } catch (error) {
       console.error("Error processing webhook:", error);
       return NextResponse.json(
@@ -92,3 +138,4 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ received: true });
 }
+
