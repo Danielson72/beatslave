@@ -1,274 +1,36 @@
-# BeatSlave Market v1.0
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Professional beat marketplace built with Next.js 14, TypeScript, Prisma, and Stripe. Gospel, Hip Hop, and Trap beats with instant downloads and secure licensing.
+## Getting Started
 
-## 🎵 Features
+First, run the development server:
 
-### v1.0 (Current - Production Ready)
-- ✅ Browse catalog with filters (genre, mood, BPM, search)
-- ✅ Track detail pages with audio preview
-- ✅ Standard License ($0.99) with Stripe Checkout
-- ✅ Secure download tokens (24-hour validity)
-- ✅ Legal pages (Terms, License Agreement)
-- ✅ Terms acceptance enforcement
-- ✅ Admin dashboard (password-gated)
-- ✅ 2-Track downloads (WAV + MP3)
-
-### v1.1 (Database Ready - Not in UI)
-- 🔄 Premium License ($4.99) with royalty tracking
-- 🔄 Exclusive License ($49.99) with royalty tiers
-- 🔄 Royalty reporting system
-- 🔄 Advanced license management
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+
-- PostgreSQL database (Supabase recommended)
-- Stripe account
-
-### Installation
-
-1. **Clone and install dependencies:**
-```bash
-npm install
-```
-
-2. **Configure environment variables:**
-
-Copy `.env.example` to `.env.local`:
-```bash
-cp .env.example .env.local
-```
-
-Edit `.env.local` with your credentials:
-```env
-# Get from Supabase dashboard
-DATABASE_URL="postgresql://..."
-
-# Get from Stripe dashboard
-STRIPE_PUBLISHABLE_KEY="pk_test_..."
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_WEBHOOK_SECRET="whsec_..." # See webhook setup below
-
-# Application settings
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-random-secret-here"
-ADMIN_PASSWORD="your-secure-password"
-NEXT_PUBLIC_ADMIN_UI_PASS="your-secure-password"
-```
-
-3. **Set up database:**
-```bash
-npx prisma migrate dev
-npx prisma db seed
-```
-
-4. **Start development server:**
 ```bash
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-Visit http://localhost:3000
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 💳 Stripe Setup
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-### Test Mode
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-Use Stripe's test card for development:
-- **Card Number:** 4242 4242 4242 4242
-- **Expiry:** Any future date
-- **CVC:** Any 3 digits
-- **ZIP:** Any 5 digits
+## Learn More
 
-### Webhook Configuration
+To learn more about Next.js, take a look at the following resources:
 
-#### Option 1: Stripe CLI (Recommended for Development)
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-1. Install Stripe CLI: https://stripe.com/docs/stripe-cli
-2. Login: `stripe login`
-3. Forward webhooks:
-```bash
-stripe listen --forward-to localhost:3000/api/webhooks/stripe
-```
-4. Copy the webhook signing secret (starts with `whsec_`) to your `.env.local`
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-#### Option 2: Stripe Dashboard (For Production)
+## Deploy on Vercel
 
-1. Go to https://dashboard.stripe.com/webhooks
-2. Click "Add endpoint"
-3. Set URL: `https://yourdomain.com/api/webhooks/stripe`
-4. Select event: `checkout.session.completed`
-5. Copy the signing secret to your environment variables
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-## 📁 Project Structure
-
-```
-├── app/
-│   ├── api/
-│   │   ├── checkout/          # Create Stripe sessions
-│   │   ├── webhooks/stripe/   # Handle payment completion
-│   │   ├── download/[token]/  # Secure file downloads
-│   │   └── tracks/            # Track API endpoints
-│   ├── catalog/               # Browse all beats
-│   ├── track/[slug]/          # Track detail + purchase
-│   ├── success/               # Post-purchase page
-│   ├── admin/                 # Upload dashboard
-│   ├── legal/
-│   │   ├── terms/             # Terms of Service
-│   │   └── license/           # License Agreement
-│   ├── layout.tsx             # Root layout
-│   └── page.tsx               # Landing page
-├── components/ui/             # Shadcn UI components
-├── lib/
-│   ├── prisma.ts              # Database client
-│   ├── stripe.ts              # Stripe client
-│   └── utils.ts               # Utilities
-├── prisma/
-│   ├── schema.prisma          # Database schema
-│   └── seed.ts                # Seed data
-└── public/uploads/            # Local file storage
-    ├── covers/
-    ├── tracks/
-    └── previews/
-```
-
-## 🗄️ Database Schema
-
-### Core Models (v1.0 Active)
-- **Artist** - Producer information
-- **Release** - Album/EP grouping
-- **Track** - Individual beats with metadata
-- **Order** - Purchase records
-- **OrderItem** - Line items per order
-- **DownloadToken** - Secure 24h download links
-
-### Future Models (v1.1 Ready)
-- **TermsAcceptance** - Legal compliance tracking
-- **LicenseAgreement** - License terms per purchase
-- **RoyaltyReport** - Revenue sharing for Premium/Exclusive
-
-## 🎨 Design & UX
-
-- Mobile-first responsive design
-- Clean, professional aesthetic
-- Accessible forms with ARIA attributes
-- Loading states for all async operations
-- Audio preview player on track pages
-
-## 🔒 Legal Protection
-
-### v1.0 Implementation
-1. Terms of Service page
-2. License Agreement page
-3. Checkbox requirement before purchase
-4. Server-side validation of terms acceptance
-5. TermsAcceptance records stored in database
-
-### Important Copy (Always Visible)
-> "Includes 2-Track WAV + MP3. Stems available separately. Contact: dalvarez@sotsvc.com"
-
-## 🎯 Seed Data
-
-5 pre-loaded tracks across 3 artists:
-
-**The Tru Witnesses**
-- Kronological (85 BPM, Hip Hop, Dark)
-- In The Shadows (90 BPM, Hip Hop, Mysterious)
-
-**Aaliyah Infinite**
-- Your Word Cuts Deep (72 BPM, Gospel/R&B, Emotional)
-- Beauty in the Suffering (68 BPM, Gospel, Uplifting)
-
-**Daniel In The Lions Den**
-- Heavenly Vibin (140 BPM, Trap, Energetic)
-
-## 🛠️ Tech Stack
-
-- **Framework:** Next.js 14 (App Router)
-- **Language:** TypeScript (strict mode)
-- **Database:** PostgreSQL + Prisma ORM
-- **Payments:** Stripe Checkout + Webhooks
-- **UI:** Tailwind CSS + Shadcn/UI
-- **Storage:** Local filesystem (v1.0), S3-ready (v1.1)
-- **Validation:** Zod schemas
-
-## 📝 Scripts
-
-```bash
-npm run dev          # Start development server
-npm run build        # Production build
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run db:migrate   # Run Prisma migrations
-npm run db:seed      # Seed database
-npm run db:studio    # Open Prisma Studio
-```
-
-## 🚢 Production Deployment
-
-1. **Build the application:**
-```bash
-npm run build
-```
-
-2. **Set production environment variables**
-3. **Run migrations on production database:**
-```bash
-npx prisma migrate deploy
-```
-
-4. **Configure Stripe webhook endpoint** (see Webhook Configuration above)
-
-## 🔐 Admin Access
-
-Visit `/admin` and enter the password from `NEXT_PUBLIC_ADMIN_UI_PASS`.
-
-**Note:** v1.0 admin panel is UI-only. File uploads require backend API integration.
-
-## 🐛 Troubleshooting
-
-### Webhooks Not Working
-- Verify `STRIPE_WEBHOOK_SECRET` is set correctly
-- Check Stripe CLI is running (`stripe listen`)
-- Confirm endpoint URL in Stripe Dashboard
-
-### Database Connection Issues
-- Verify `DATABASE_URL` is correct
-- Check database is running and accessible
-- Run `npx prisma generate` after schema changes
-
-### Downloads Not Working
-- Ensure track files exist in `/public/uploads/tracks/`
-- Check file permissions
-- Verify download token hasn't expired (24h limit)
-
-## 🎓 Development Notes
-
-### Adding New Tracks Manually
-1. Place audio files in `/public/uploads/tracks/`
-2. Place preview clips in `/public/uploads/previews/`
-3. Place cover art in `/public/uploads/covers/`
-4. Add records via Prisma Studio or seed script
-
-### v1.1 Migration Path
-All v1.1 fields exist in database schema. To enable:
-1. Update UI components to show Premium/Exclusive options
-2. Update checkout route to handle new license types
-3. Implement royalty calculation logic
-4. Create admin interface for royalty reports
-
-## 📧 Support & Contact
-
-For stems, custom licenses, or support:
-**Email:** dalvarez@sotsvc.com
-
-## 📄 License
-
-See LICENSE file for details.
-
----
-
-**Version:** 1.0.0
-**Status:** Production Ready
-**Last Updated:** 2024
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

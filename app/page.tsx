@@ -1,155 +1,225 @@
-import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Music, ShoppingCart, Download, Shield, Clock, Award } from "lucide-react";
+'use client'
 
-export default function HomePage() {
+import { useState } from 'react'
+import { Check } from 'lucide-react'
+import Link from 'next/link'
+import SubscribeModal from './components/SubscribeModal'
+
+const pricingTiers = [
+  {
+    name: 'Standard License',
+    price: '$0.99',
+    description: 'Personal use only (non-monetized)',
+    features: [
+      '2-Track Stems WAV + Tagged MP3',
+      'Non-exclusive, non-commercial',
+      'Personal use only',
+      'No backend royalties',
+    ],
+    priceId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRICE_ID,
+    royalties: 'No royalties required',
+    highlight: false,
+  },
+  {
+    name: 'Premium License',
+    price: '$4.99',
+    description: 'Commercial rights for your releases',
+    features: [
+      '2-Track Stems WAV + Tagged MP3',
+      'Commercial use (YouTube, Spotify, Apple Music)',
+      'Non-exclusive (others can buy same beat)',
+      '30-40% backend royalties required',
+    ],
+    priceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID,
+    royalties: '30-40% backend royalties on all commercial revenue',
+    highlight: true,
+  },
+  {
+    name: 'Exclusive License',
+    price: '$49.99',
+    description: 'Full exclusive ownership',
+    features: [
+      'Beat removed from catalog after purchase',
+      'Complete commercial rights',
+      'Can register copyright in your name',
+      '10-20% backend royalties required',
+    ],
+    priceId: process.env.NEXT_PUBLIC_STRIPE_EXCLUSIVE_PRICE_ID,
+    royalties: '10-20% backend royalties on all commercial revenue',
+    highlight: false,
+  },
+]
+
+const navLinks = [
+  { label: 'Beats', href: '/' },
+  { label: '88', href: '/88' },
+  { label: 'Custom Song', href: '/custom-song' },
+  { label: 'Licensing', href: '/licensing' },
+]
+
+export default function Home() {
+  const [showSubscribe, setShowSubscribe] = useState(false)
+
   return (
-    <div>
-      <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/hero/hero-premium.svg"
-            alt="Premium studio equipment representing professional beat production"
-            fill
-            priority
-            quality={100}
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
-        </div>
-
-        <div className="container mx-auto px-4 py-20 relative z-10 text-center">
-          <div className="mb-8 inline-block">
-            <div className="text-6xl md:text-7xl lg:text-8xl font-bold mb-2 bg-gradient-to-r from-gold-dark via-gold to-gold-light bg-clip-text text-transparent">
-              BeatSlave
-            </div>
-            <div className="text-xl md:text-2xl text-gold font-light tracking-wider">
-              Premium Beats. Professional Power.
-            </div>
-          </div>
-
-          <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto font-light leading-relaxed">
-            Gospel, Hip Hop, and Trap beats crafted with purpose.
-            <br className="hidden md:block" />
-            Studio-grade quality for artists who demand excellence.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Link href="/catalog">
-              <Button
-                size="lg"
-                className="text-lg px-8 bg-gradient-to-r from-gold-dark to-gold hover:from-gold hover:to-gold-light text-black font-semibold shadow-xl hover:shadow-gold/50 transition-all duration-300"
-              >
-                Browse Premium Beats
-              </Button>
-            </Link>
-            <Link href="/legal/license">
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-lg px-8 border-gold text-gold hover:bg-gold/10 transition-all duration-300"
-              >
-                View Licensing
-              </Button>
-            </Link>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-white/70">
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-gold" />
-              <span>Secure Payment</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Download className="w-4 h-4 text-gold" />
-              <span>Instant Download</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-gold" />
-              <span>24/7 Access</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce z-10">
-          <div className="w-6 h-10 border-2 border-gold/50 rounded-full flex items-start justify-center p-2">
-            <div className="w-1 h-3 bg-gold/50 rounded-full animate-pulse" />
-          </div>
-        </div>
-      </section>
-
-      <section className="container mx-auto px-4 py-20">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Why Artists Choose <span className="text-gold">BeatSlave</span>
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Professional tools for serious creators
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center p-8 rounded-lg border border-border hover:border-gold/50 transition-all duration-300 group">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-gold-dark/20 to-gold/20 mb-6 group-hover:from-gold-dark/30 group-hover:to-gold/30 transition-all duration-300">
-              <Music className="w-10 h-10 text-gold" />
-            </div>
-            <h3 className="text-2xl font-bold mb-3">Professional Quality</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Studio-grade beats mixed and mastered by industry professionals.
-              Every track is production-ready for commercial use.
-            </p>
-          </div>
-
-          <div className="text-center p-8 rounded-lg border border-border hover:border-gold/50 transition-all duration-300 group">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-gold-dark/20 to-gold/20 mb-6 group-hover:from-gold-dark/30 group-hover:to-gold/30 transition-all duration-300">
-              <ShoppingCart className="w-10 h-10 text-gold" />
-            </div>
-            <h3 className="text-2xl font-bold mb-3">Simple Licensing</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Clear, straightforward terms with instant downloads.
-              No hidden fees, no complicated contracts.
-            </p>
-          </div>
-
-          <div className="text-center p-8 rounded-lg border border-border hover:border-gold/50 transition-all duration-300 group">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-gold-dark/20 to-gold/20 mb-6 group-hover:from-gold-dark/30 group-hover:to-gold/30 transition-all duration-300">
-              <Award className="w-10 h-10 text-gold" />
-            </div>
-            <h3 className="text-2xl font-bold mb-3">Premium Support</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Stems available separately for advanced production.
-              Direct artist contact for custom projects.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-gradient-to-b from-black-rich to-background py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto bg-gradient-to-br from-gold-dark/10 to-gold/10 rounded-2xl border border-gold/20 p-12 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Ready to Elevate Your Sound?
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join hundreds of artists creating with professional beats.
-              Browse our catalog and find your next hit.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/catalog">
-                <Button
-                  size="lg"
-                  className="text-lg px-10 bg-gradient-to-r from-gold-dark to-gold hover:from-gold hover:to-gold-light text-black font-semibold shadow-xl hover:shadow-gold/50 transition-all duration-300"
+    <div className="min-h-screen bg-[#0b0b0b] text-white">
+      {/* Header */}
+      <header className="border-b border-border">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="text-2xl font-bold font-serif text-gold">BeatSlave</Link>
+            <nav className="hidden md:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm text-zinc-400 hover:text-gold transition-colors font-sans"
                 >
-                  Explore Catalog
-                </Button>
+                  {link.label}
+                </Link>
+              ))}
+              <button
+                onClick={() => setShowSubscribe(true)}
+                className="text-sm font-semibold text-gold border border-gold px-4 py-1.5 rounded-full hover:bg-gold hover:text-black transition-all"
+              >
+                Subscribe
+              </button>
+              <Link
+                href="/admin"
+                className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
+              >
+                Admin
               </Link>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="container mx-auto px-4 py-16 text-center">
+        <h2 className="text-5xl font-bold mb-4 font-serif">Premium Beats for Your Vision</h2>
+        <p className="text-xl text-zinc-400 mb-8 font-sans">
+          Choose the perfect license for your music
+        </p>
+      </section>
+
+      {/* Pricing Cards */}
+      <section className="container mx-auto px-4 pb-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {pricingTiers.map((tier) => (
+            <div
+              key={tier.name}
+              className={`relative rounded-2xl border p-8 ${
+                tier.highlight
+                  ? 'border-gold bg-gold/5 shadow-lg shadow-gold/10'
+                  : 'border-border bg-surface/50'
+              }`}
+            >
+              {tier.highlight && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gold text-black text-sm font-semibold px-4 py-1 rounded-full">
+                  Most Popular
+                </div>
+              )}
+
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold mb-2 font-serif">{tier.name}</h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-5xl font-bold text-gold">{tier.price}</span>
+                </div>
+                <p className="text-zinc-400 mt-2">{tier.description}</p>
+              </div>
+
+              <ul className="space-y-4 mb-8">
+                {tier.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-gold shrink-0 mt-0.5" />
+                    <span className="text-sm text-zinc-300">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mb-6 p-4 rounded-lg bg-surface border border-border">
+                <p className="text-xs text-zinc-400 font-medium">Royalty Agreement:</p>
+                <p className="text-sm text-zinc-200 mt-1">{tier.royalties}</p>
+              </div>
+
+              <button
+                onClick={() => {
+                  alert('Checkout coming soon! We need to set up Stripe products first.')
+                }}
+                className={`w-full py-3 px-6 rounded-lg font-semibold transition-all ${
+                  tier.highlight
+                    ? 'bg-gold hover:bg-gold-dark text-black'
+                    : 'bg-white hover:bg-zinc-200 text-black'
+                }`}
+              >
+                Purchase License
+              </button>
             </div>
-            <p className="text-sm text-muted-foreground mt-6">
-              Standard License starting at <span className="text-gold font-semibold">$0.99</span>
-            </p>
+          ))}
+        </div>
+      </section>
+
+      {/* Info Section */}
+      <section className="border-t border-border py-16">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <h3 className="text-3xl font-bold mb-8 text-center font-serif">How It Works</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="bg-gold/10 border border-gold/20 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4 text-gold font-bold">
+                1
+              </div>
+              <h4 className="font-semibold mb-2">Choose Your License</h4>
+              <p className="text-sm text-zinc-400">
+                Select the license that fits your project needs
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="bg-gold/10 border border-gold/20 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4 text-gold font-bold">
+                2
+              </div>
+              <h4 className="font-semibold mb-2">Secure Checkout</h4>
+              <p className="text-sm text-zinc-400">
+                Complete your purchase with Stripe secure payment
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="bg-gold/10 border border-gold/20 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4 text-gold font-bold">
+                3
+              </div>
+              <h4 className="font-semibold mb-2">Download & Create</h4>
+              <p className="text-sm text-zinc-400">
+                Instantly download your files and start making music
+              </p>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Subscribe CTA */}
+      <section className="border-t border-border py-16">
+        <div className="container mx-auto px-4 max-w-2xl text-center">
+          <h3 className="text-3xl font-bold mb-3 font-serif">Never Miss a Drop</h3>
+          <p className="text-zinc-400 mb-8">
+            New beats, exclusive offers, and custom song promos — straight to your inbox.
+          </p>
+          <button
+            onClick={() => setShowSubscribe(true)}
+            className="bg-gold hover:bg-gold-dark text-black font-bold px-8 py-4 rounded-lg text-lg transition-colors"
+          >
+            Subscribe Now
+          </button>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border py-8">
+        <div className="container mx-auto px-4 text-center text-sm text-zinc-400">
+          <p>&copy; 2025 BeatSlave. All rights reserved.</p>
+        </div>
+      </footer>
+
+      {/* Subscribe Modal */}
+      <SubscribeModal isOpen={showSubscribe} onClose={() => setShowSubscribe(false)} />
     </div>
-  );
+  )
 }
